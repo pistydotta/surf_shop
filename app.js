@@ -3,13 +3,28 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const session = require("express-session")
+const passport = require('passport')
+const mongoose = require('mongoose')
+
 
 const indexRouter = require('./routes/index');
 const postsRouter = require('./routes/posts')
 const reviewsRouter = require('./routes/reviews')
 
+const User = require('./models/user');
+
 const app = express();
 
+mongoose.connect('mongodb://localhost:27017/surf_shop', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+const db = mongoose.connection
+db.on('error', console.error.bind(console, 'connection error:'))
+db.once('open', () => {
+  console.log("we're connected")
+})
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -20,10 +35,26 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+
+app.use(session({
+  secret: 'gaspeidinho',
+  resave: false,
+  saveUninitialized: true,
+}))
+
+passport.use(User.createStrategy());
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use('/', indexRouter);
 app.use('/posts', postsRouter)
 app.use('/posts/:id/reviews', reviewsRouter)
 // catch 404 and forward to error handler
+
+
+
 app.use(function(req, res, next) {
   next(createError(404));
 });
