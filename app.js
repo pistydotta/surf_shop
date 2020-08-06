@@ -6,8 +6,8 @@ const logger = require('morgan');
 const session = require("express-session")
 const passport = require('passport')
 const mongoose = require('mongoose')
-
-
+const methodOverride = require('method-override')
+const bodyParser = require('body-parser')
 const indexRouter = require('./routes/index');
 const postsRouter = require('./routes/posts')
 const reviewsRouter = require('./routes/reviews')
@@ -31,10 +31,11 @@ app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
 app.use(express.json());
+app.use(bodyParser.urlencoded({extended: true}))
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(methodOverride('_method'))
 
 
 app.use(session({
@@ -43,8 +44,10 @@ app.use(session({
   saveUninitialized: true,
 }))
 
-passport.use(User.createStrategy());
+app.use(passport.initialize())
+app.use(passport.session())
 
+passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
