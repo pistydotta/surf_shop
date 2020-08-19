@@ -12,7 +12,7 @@ cloudinary.config({
 module.exports = {
     async postIndex(req, res, next) {
         let posts = await Post.find({})
-        res.render('posts/index', { posts })
+        res.render('posts/index', { posts, title: 'Post Index' })
     },
 
     postNew(req, res, next) {
@@ -36,6 +36,7 @@ module.exports = {
             .send()
         req.body.post.coordinates = response.body.features[0].geometry.coordinates
         let post = await Post.create(req.body.post)
+        req.session.success = 'Post Created Successfully'
         res.redirect(`/posts/${post.id}`)
     },
 
