@@ -18,7 +18,7 @@ const User = require('./models/user');
 
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/surf_shop', {
+mongoose.connect('mongodb://localhost:27017/surf_shop-mapbox', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
@@ -73,10 +73,11 @@ app.use('/posts/:id/reviews', reviewsRouter)
 
 
 
-app.use(function (req, res, next) {
-  next(createError(404));
+app.use(function(req, res, next) {
+  const err = new Error('Not Found');
+  err.status = 404;
+  next(err);
 });
-
 // error handler
 app.use(function (err, req, res, next) {
   /*   // set locals, only providing error in development
