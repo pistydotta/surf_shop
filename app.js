@@ -1,6 +1,7 @@
 require('dotenv').config()
 const createError = require('http-errors');
 const express = require('express');
+const engine = require('ejs-mate')
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -15,9 +16,10 @@ const reviewsRouter = require('./routes/reviews')
 
 const User = require('./models/user');
 
+
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/surf_shop-mapbox', {
+mongoose.connect('mongodb://localhost:27017/surf_shop', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 });
@@ -27,6 +29,7 @@ db.once('open', () => {
   console.log("we're connected")
 })
 // view engine setup
+app.engine('ejs', engine)
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
@@ -53,6 +56,15 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+app.use(function(req, res, next) {
+  res.locals.title = "Surf Shop"
+  res.locals.success = req.session.success || ''
+  delete req.session.success
+  res.locals.error = req.session.error || ''
+  delete req.session.error
+  next()
+})
+
 app.use('/', indexRouter);
 app.use('/posts', postsRouter)
 app.use('/posts/:id/reviews', reviewsRouter)
@@ -61,18 +73,23 @@ app.use('/posts/:id/reviews', reviewsRouter)
 
 
 app.use(function(req, res, next) {
-  next(createError(404));
+  const err = new Error('Not Found')
+  err.status = 404
+  next(err)
 });
 
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  // res.locals.message = err.message;
+  // res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  // // render the error page
+  // res.status(err.status || 500);
+  // res.render('error');
+  console.log(err)
+  req.session.error = err.message
+  res.redirect('back')
 });
 
 module.exports = app;
