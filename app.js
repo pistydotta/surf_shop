@@ -57,6 +57,11 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use(function(req, res, next) {
+  req.user = {
+    "_id" : "5f5124be3e4c8512681b6190",
+     "username" : "pisty"
+  }
+  res.locals.currentUser = req.user
   res.locals.title = "Surf Shop"
   res.locals.success = req.session.success || ''
   delete req.session.success
@@ -72,11 +77,11 @@ app.use('/posts/:id/reviews', reviewsRouter)
 
 
 
-app.use(function(req, res, next) {
-  const err = new Error('Not Found')
-  err.status = 404
-  next(err)
-});
+// app.use(function(req, res, next) {
+//   const err = new Error('Not Found')
+//   err.status = 404
+//   next(err)
+// });
 
 // error handler
 app.use(function(err, req, res, next) {

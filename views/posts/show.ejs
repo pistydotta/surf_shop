@@ -4,27 +4,45 @@
 <div><%= post.description %></div>
 <div><%= post.location %></div>
 <div>
-    <% post.images.forEach(function(image) { %>
-    <img src="<%= image.url %>" alt="Surf board image" width="200px">
-    <% }) %>
-</div>
-<div id='map'></div>
-<div><a href="/posts/<%=post.id%>/edit"><button>Edit Post</button></a></div>
-<div>
-    <form action="/posts/<%=post.id%>?_method=DELETE" method="POST">
-        <input type="submit" value="Delete">
-    </form>
+  <% post.images.forEach(function(image) { %>
+  <img src="<%= image.url %>" alt="Surf board image" width="200px" />
+  <% }) %>
 </div>
 
+<div id="map"></div>
+
+<div>
+  <a href="/posts/<%=post.id%>/edit"><button>Edit Post</button></a>
+</div>
+
+<div>
+  <form action="/posts/<%=post.id%>?_method=DELETE" method="POST">
+    <input type="submit" value="Delete" />
+  </form>
+</div>
 
 <h3>Create a review</h3>
 <form action="/posts/<%=post.id%>/reviews" method="POST">
-    <textarea name="review[body]" required></textarea>
-    <input name="review[rating]" type="number" min="1" max="5" step="1" required>
-    <input type="submit">
+  <textarea name="review[body]" required></textarea>
+  <input name="review[rating]" type="number" min="1" max="5" step="1" required />
+  <input type="submit" />
 </form>
+
 <h2>Reviews</h2>
 <% post.reviews.forEach(function(review) { %>
-    <div><%= review.body %></div>
-    <div>Rating: <%= review.rating %></div>
-<%  }) %>
+<div>
+  autor: <%= review.author.username %> <br>
+  <%= review.body %>
+  Rating: <%= review.rating %>
+</div>
+<div>
+  <button class="toggle-edit-form">Edit</button>
+
+  <form action="/posts/<%=post.id%>/reviews/<%= review.id %>?_method=PUT" method="POST" class="edit-review-form">
+    <textarea name="review[body]" required><%=review.body%></textarea>
+    <input name="review[rating]" type="number" min="1" max="5" step="1" value="<%=review.rating%>" required />
+    <input type="submit" value="Update" />
+  </form>
+</div>
+<% }) %>
+

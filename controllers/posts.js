@@ -44,7 +44,11 @@ module.exports = {
         let post = await Post.findById(req.params.id).populate({
             path: 'reviews',
             options: {
-                sort: {'_id': -1}
+                sort: { '_id': -1 }
+            },
+            populate: {
+                path: 'author',
+                model: 'User'
             }
         })
         res.render('posts/show', { post })
@@ -85,7 +89,7 @@ module.exports = {
                 query: req.body.post.location,
                 limit: 1
             })
-            .send()
+                .send()
             post.coordinates = response.body.features[0].geometry.coordinates
             post.location = req.body.post.location
         }

@@ -5,9 +5,7 @@ const {reviewCreate, reviewDestroy, reviewUpdate} = require('../controllers/revi
 
 router.post('/', asyncErrorHandler(reviewCreate));
 
-router.put('/:review_id', (req, res, next) => {
-    res.send('UPDATE review')
-});
+router.put('/:review_id', asyncErrorHandler(reviewUpdate));
 
 router.delete('/:review_id', (req, res, next) => {
     res.send('DELETE review')
