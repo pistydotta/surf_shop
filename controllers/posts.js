@@ -1,5 +1,5 @@
 const Post = require('../models/post')
-
+const User = require('../models/user')
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding')
 const geocodingClient = mbxGeocoding({ accessToken: process.env.MAPBOX_TOKEN })
 
