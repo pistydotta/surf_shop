@@ -4,6 +4,17 @@
 <div><%= post.description %></div>
 <div><%= post.location %></div>
 <div>
+  <% for(let i = 0; i < 5; i++){ %>
+  <% if(i < floorRating) { %>
+    <i class="fas fa-star"></i>
+  <% } else if((post.avgRating - i ) > 0 && (post.avgRating - i ) < 1 ) { %>
+    <i class="fas fa-star-half"></i>
+  <% } else { %>
+    <i class="far fa-star"></i>
+  <% } %>
+<% } %>
+</div>
+<div>
   <% post.images.forEach(function(image) { %>
   <img src="<%= image.url %>" alt="Surf board image" width="200px" />
   <% }) %>
@@ -26,7 +37,8 @@
   <textarea name="review[body]" required></textarea>
   <fieldset class="starability-basic">
     <legend>Rating:</legend>
-    <input type="radio" id="rate0" class="input-no-rate" name="review[rating]" value="0" checked aria-label="No rating." />
+    <input type="radio" id="rate0" class="input-no-rate" name="review[rating]" value="0" checked
+      aria-label="No rating." />
     <input type="radio" id="rate1" name="review[rating]" value="1" />
     <label for="rate1" title="Terrible">1 star</label>
     <input type="radio" id="rate2" name="review[rating]" value="2" />
@@ -56,7 +68,8 @@
     <textarea name="review[body]" required><%=review.body%></textarea>
     <fieldset class="starability-basic">
       <legend>Rating:</legend>
-      <input type="radio" id="edit-rate0" class="input-no-rate" name="review[rating]" value="0" checked aria-label="No rating." />
+      <input type="radio" id="edit-rate0" class="input-no-rate" name="review[rating]" value="0" checked
+        aria-label="No rating." />
       <input type="radio" id="edit-rate1" name="review[rating]" value="1" />
       <label for="edit-rate1" title="Terrible">1 star</label>
       <input type="radio" id="edit-rate2" name="review[rating]" value="2" />
