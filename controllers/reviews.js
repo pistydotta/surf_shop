@@ -11,6 +11,7 @@ module.exports = {
             req.session.error = 'You already posted a review on this product'
             return res.redirect(`/posts/${post.id}`)
         }
+        console.log(req.body)
         req.body.review.author = req.user._id
         let review = await Review.create(req.body.review)
         

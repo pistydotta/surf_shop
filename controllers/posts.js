@@ -34,6 +34,7 @@ module.exports = {
         })
             .send()
         req.body.post.geometry = response.body.features[0].geometry
+        req.body.post.author = req.user._id
         let post = new Post(req.body.post);
 		post.properties.description = `<strong><a href="/posts/${post._id}">${post.title}</a></strong><p>${post.location}</p><p>${post.description.substring(0, 20)}...</p>`;
 		await post.save();
@@ -53,17 +54,15 @@ module.exports = {
             }
         })
         const floorRating = post.calculateAvgRating();
-        console.log(floorRating, "floor rating print")
         res.render('posts/show', { post, floorRating })
     },
 
-    async postEdit(req, res, next) {
-        let post = await Post.findById(req.params.id)
-        res.render('posts/edit', { post })
+    postEdit(req, res, next) {
+        res.render('posts/edit')
     },
 
     async postUpdate(req, res, next) {
-        let post = await Post.findById(req.params.id)
+        let post = res.locals.post
         if (req.body.deleteImages && req.body.deleteImages.length) {
             let deleteImages = req.body.deleteImages
             for (const public_id of deleteImages) {
@@ -105,7 +104,7 @@ module.exports = {
     },
 
     async postDestroy(req, res, next) {
-        let post = await Post.findById(req.params.id)
+        let post = res.locals.post
         for (const image of post.images) {
             await cloudinary.v2.uploader.destroy(image.public_id)
         }

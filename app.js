@@ -1,5 +1,4 @@
-require('dotenv').config()
-const createError = require('http-errors');
+require('dotenv').config()  
 const express = require('express');
 const engine = require('ejs-mate')
 const path = require('path');
@@ -9,7 +8,6 @@ const session = require("express-session")
 const passport = require('passport')
 const mongoose = require('mongoose')
 const methodOverride = require('method-override')
-const bodyParser = require('body-parser')
 const indexRouter = require('./routes/index');
 const postsRouter = require('./routes/posts')
 const reviewsRouter = require('./routes/reviews')
@@ -23,6 +21,7 @@ const app = express();
 
 mongoose.connect('mongodb://localhost:27017/surf_shop', {
   useNewUrlParser: true,
+  useCreateIndex: true,
   useUnifiedTopology: true
 });
 const db = mongoose.connection
@@ -38,8 +37,7 @@ app.use(express.static('public'));
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(bodyParser.urlencoded({extended: true}))
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(methodOverride('_method'))
@@ -59,10 +57,10 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use(function(req, res, next) {
-  req.user = {
-    "_id" : "5f2470cb8ed0d716b0ae1670",
-     "username" : "pisty"
-  }
+  // req.user = {
+  //   "_id" : "5f2470cb8ed0d716b0ae1670",
+  //    "username" : "pisty"
+  // }
   res.locals.currentUser = req.user
   res.locals.title = "Surf Shop"
   res.locals.success = req.session.success || ''
